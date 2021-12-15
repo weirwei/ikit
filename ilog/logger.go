@@ -9,8 +9,8 @@ import (
 )
 
 var (
-	debugLog = log.New(os.Stdout, fmt.Sprintf("%s[debug]%s", lightPurple, none), log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
-	infoLog  = log.New(os.Stdout, fmt.Sprintf("%s[info ]%s", lightBlue, none), log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
+	debugLog = log.New(os.Stdout, fmt.Sprintf("%s[debug]%s", lightGreen, none), log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
+	infoLog  = log.New(os.Stdout, fmt.Sprintf("%s[info ]%s", lightPurple, none), log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
 	warnLog  = log.New(os.Stdout, fmt.Sprintf("%s[warn ]%s", yellow, none), log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
 	errorLog = log.New(os.Stdout, fmt.Sprintf("%s[error]%s", lightRed, none), log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
 	fatalLog = log.New(os.Stdout, fmt.Sprintf("%s[fatal]%s", lightRed, none), log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
@@ -19,6 +19,7 @@ var (
 	mu       sync.Mutex
 )
 
+// SetLevel 设置日志等级，默认打印全部
 func SetLevel(level Level) {
 	mu.Lock()
 	defer mu.Unlock()
@@ -27,22 +28,22 @@ func SetLevel(level Level) {
 		logger.SetOutput(os.Stdout)
 	}
 
-	if LevelDebug < level {
+	if LevelDebug > level {
 		debugLog.SetOutput(ioutil.Discard)
 	}
-	if LevelInfo < level {
+	if LevelInfo > level {
 		infoLog.SetOutput(ioutil.Discard)
 	}
-	if LevelWarn < level {
+	if LevelWarn > level {
 		warnLog.SetOutput(ioutil.Discard)
 	}
-	if LevelError < level {
+	if LevelError > level {
 		errorLog.SetOutput(ioutil.Discard)
 	}
-	if LevelFatal < level {
+	if LevelFatal > level {
 		fatalLog.SetOutput(ioutil.Discard)
 	}
-	if LevelPanic < level {
+	if LevelPanic > level {
 		panicLog.SetOutput(ioutil.Discard)
 	}
 }
