@@ -18,8 +18,8 @@ func TestHttpPost(t *testing.T) {
 		RequestBody: requestMap,
 		Encode:      EncodeForm,
 	}
-	result, _ := Post(&options)
-	t.Log(string(result.ResponseBody))
+	result, _ := POST(&options)
+	t.Log(result.ResponseBody)
 }
 
 func TestHttpGet(t *testing.T) {
@@ -31,6 +31,6 @@ func TestHttpGet(t *testing.T) {
 		URL:         "https://suggest.taobao.com/sug",
 		RequestBody: requestMap,
 	}
-	result, _ := Get(&options)
-	t.Log(string(result.ResponseBody))
+	result, _ := GET(&options)
+	t.Log(result.ResponseBody)
 }

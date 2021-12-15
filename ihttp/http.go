@@ -39,11 +39,11 @@ type Options struct {
 // Result http request result
 type Result struct {
 	HttpCode     int
-	ResponseBody []byte
+	ResponseBody string
 }
 
-// Post http post request
-func Post(opt *Options) (*Result, error) {
+// POST http post request
+func POST(opt *Options) (*Result, error) {
 	data, err := opt.getData()
 	if err != nil {
 		return nil, err
@@ -54,13 +54,13 @@ func Post(opt *Options) (*Result, error) {
 	}
 	opt.makeRequest(request)
 	client := http.Client{}
-	ilog.Infof("post request:%v", iutil.ToJson(opt))
 	response, err := client.Do(request)
 	if err != nil {
+		ilog.Errorf("POST err:%v,opt:%s", err, iutil.ToJson(opt))
 		return nil, err
 	}
-	ilog.Infof("post response:%v", iutil.ToJson(response))
 	res, err := responseToResult(response)
+	ilog.Infof("POST opt:%s,res:%s", iutil.ToJson(opt), iutil.ToJson(res))
 	if err != nil {
 		return nil, err
 	}
@@ -68,8 +68,8 @@ func Post(opt *Options) (*Result, error) {
 	return res, nil
 }
 
-// Get http get request
-func Get(opt *Options) (*Result, error) {
+// GET http get request
+func GET(opt *Options) (*Result, error) {
 	data, err := opt.getUrlData()
 	if err != nil {
 		return nil, err
@@ -80,13 +80,13 @@ func Get(opt *Options) (*Result, error) {
 		return nil, err
 	}
 	client := http.Client{}
-	ilog.Infof("get request:%v", iutil.ToJson(opt))
 	response, err := client.Do(request)
 	if err != nil {
+		ilog.Errorf("GET err:%v,opt:%s", err, iutil.ToJson(opt))
 		return nil, err
 	}
-	ilog.Infof("get response:%v", iutil.ToJson(response))
 	res, err := responseToResult(response)
+	ilog.Infof("GET opt:%s,res:%s", iutil.ToJson(opt), iutil.ToJson(res))
 	if err != nil {
 		return nil, err
 	}
@@ -176,7 +176,7 @@ func responseToResult(response *http.Response) (*Result, error) {
 			return nil, err
 		}
 		res.HttpCode = response.StatusCode
-		res.ResponseBody = body
+		res.ResponseBody = string(body)
 		_ = response.Body.Close()
 	}
 	return &res, nil
