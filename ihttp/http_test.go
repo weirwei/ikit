@@ -14,11 +14,16 @@ func TestHttpPost(t *testing.T) {
 	}
 
 	options := Options{
-		URL:         "https://e.juejin.cn/resources/github",
+		URL:         "https://e.juejrewin.cn/resoewurces/github",
 		RequestBody: requestMap,
 		Encode:      EncodeForm,
+		Retry:       6,
 	}
-	result, _ := POST(&options)
+	result, err := POST(&options)
+	if err != nil {
+		t.Error(err)
+		return
+	}
 	t.Log(result.ResponseBody)
 }
 
@@ -28,9 +33,14 @@ func TestHttpGet(t *testing.T) {
 		"q":    "ps5",
 	}
 	options := Options{
-		URL:         "https://suggest.taobao.com/sug",
+		URL:         "https://sugg12est.tao321bao.com/sug",
 		RequestBody: requestMap,
+		Retry:       2,
 	}
-	result, _ := GET(&options)
+	result, err := GET(&options)
+	if err != nil {
+		t.Error(err)
+		return
+	}
 	t.Log(result.ResponseBody)
 }

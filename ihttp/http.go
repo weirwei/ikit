@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	jsoniter "github.com/json-iterator/go"
 	"github.com/weirwei/ikit/ilog"
@@ -22,6 +23,7 @@ const (
 )
 
 // Options http request options
+//
 // URL request url
 // RequestBody 请求体
 // Encode default form
@@ -34,6 +36,33 @@ type Options struct {
 	Encode      string
 	Headers     map[string]string
 	Cookies     map[string]string
+
+	Retry       int           // 失败重试次数，0不重试
+	RetryPolicy RetryPolicy   // 失败监控，返回值为true表示失败
+	Timeout     time.Duration // 超时时间，默认3秒
+}
+
+// RetryPolicy retry 策略
+type RetryPolicy func(resp *http.Response, err error) bool
+
+var defaultRetryPolicy RetryPolicy = func(resp *http.Response, err error) bool {
+	return err != nil || resp == nil || resp.StatusCode >= http.StatusInternalServerError || resp.StatusCode == 0
+}
+
+func (o *Options) GetRetryPolicy() RetryPolicy {
+	r := defaultRetryPolicy
+	if o.RetryPolicy != nil {
+		r = o.RetryPolicy
+	}
+	return r
+}
+
+func (o *Options) GetTimeout() time.Duration {
+	t := 3 * time.Second
+	if o.Timeout > 0 {
+		t = o.Timeout
+	}
+	return t
 }
 
 // Result http request result
@@ -48,23 +77,40 @@ func POST(opt *Options) (*Result, error) {
 	if err != nil {
 		return nil, err
 	}
-	request, err := http.NewRequest(httpPost, opt.URL, strings.NewReader(data))
+	var (
+		request  *http.Request
+		response *http.Response
+	)
+	retry := opt.Retry
+	for {
+		request, err = http.NewRequest(httpPost, opt.URL, strings.NewReader(data))
+		if err != nil {
+			return nil, err
+		}
+		opt.makeRequest(request)
+		client := http.Client{
+			Timeout: opt.Timeout,
+		}
+		response, err = client.Do(request)
+		if err != nil {
+			ilog.Errorf("POST err:%v,opt:%s", err, iutil.ToJson(opt))
+		}
+		if !opt.GetRetryPolicy()(response, err) || retry <= 0 {
+			break
+		}
+		retry--
+	}
 	if err != nil {
 		return nil, err
 	}
-	opt.makeRequest(request)
-	client := http.Client{}
-	response, err := client.Do(request)
-	if err != nil {
-		ilog.Errorf("POST err:%v,opt:%s", err, iutil.ToJson(opt))
-		return nil, err
+	var res *Result
+	if response != nil {
+		res, err = responseToResult(response)
+		if err != nil {
+			return nil, err
+		}
 	}
-	res, err := responseToResult(response)
 	ilog.Infof("POST opt:%s,res:%s", iutil.ToJson(opt), iutil.ToJson(res))
-	if err != nil {
-		return nil, err
-	}
-
 	return res, nil
 }
 
@@ -79,17 +125,33 @@ func GET(opt *Options) (*Result, error) {
 	if err != nil {
 		return nil, err
 	}
-	client := http.Client{}
-	response, err := client.Do(request)
+
+	var response *http.Response
+	retry := opt.Retry
+	for {
+		client := http.Client{
+			Timeout: opt.Timeout,
+		}
+		response, err = client.Do(request)
+		if err != nil {
+			ilog.Errorf("GET err:%v,opt:%s", err, iutil.ToJson(opt))
+		}
+		if !opt.GetRetryPolicy()(response, err) || retry <= 0 {
+			break
+		}
+		retry--
+	}
 	if err != nil {
-		ilog.Errorf("GET err:%v,opt:%s", err, iutil.ToJson(opt))
 		return nil, err
 	}
-	res, err := responseToResult(response)
+	var res *Result
+	if response != nil {
+		res, err = responseToResult(response)
+		if err != nil {
+			return nil, err
+		}
+	}
 	ilog.Infof("GET opt:%s,res:%s", iutil.ToJson(opt), iutil.ToJson(res))
-	if err != nil {
-		return nil, err
-	}
 	return res, nil
 }
 
