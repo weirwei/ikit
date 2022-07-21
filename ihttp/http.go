@@ -176,6 +176,9 @@ func (o *Options) getData() (string, error) {
 
 func (o *Options) getUrlData() (data string, err error) {
 	value := &url.Values{}
+	if o.RequestBody == nil {
+		return data, nil
+	}
 	if formData, ok := o.RequestBody.(map[string]string); ok {
 		for k, v := range formData {
 			value.Set(k, v)
