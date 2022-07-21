@@ -16,7 +16,7 @@ func SetRootPath(r string) {
 	rootPath = r
 }
 
-// RootPath 返回应用的根目录
+// GetRootPath 返回应用的根目录
 func GetRootPath() string {
 	if rootPath != "" {
 		return rootPath

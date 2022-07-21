@@ -1,6 +1,61 @@
 package iutil
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
+
+func TestBytesString(t *testing.T) {
+	type args struct {
+		b []byte
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "success",
+			args: args{
+				b: []byte{'a', 'b'},
+			},
+			want: "ab",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := BytesString(tt.args.b); got != tt.want {
+				t.Errorf("BytesString() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestStringBytes(t *testing.T) {
+	type args struct {
+		s string
+	}
+	tests := []struct {
+		name string
+		args args
+		want []byte
+	}{
+		{
+			name: "success",
+			args: args{
+				s: "abc",
+			},
+			want: []byte{'a', 'b', 'c'},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := StringBytes(tt.args.s); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("StringBytes() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 
 type A struct {
 	Str     string `json:"str"`

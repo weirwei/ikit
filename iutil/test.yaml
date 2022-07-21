@@ -1,0 +1,12 @@
+rmq:
+  consumer:
+    - service: ikit
+      nameserver: "127.0.0.1:8080"
+      topic: ikit-topic
+      group: ikit-group-a
+      tags:
+        - "iutil"
+        - "ihttp"
+      retry: 3
+      broadcast: false
+      orderly: false
