@@ -30,16 +30,16 @@ const (
 // Headers headers
 // Cookies cookies
 type Options struct {
-	URL         string
-	RequestBody interface{}
-	ContentType string
-	Encode      string
-	Headers     map[string]string
-	Cookies     map[string]string
+	URL         string            `json:"url"`
+	RequestBody interface{}       `json:"requestBody"`
+	ContentType string            `json:"contentType"`
+	Encode      string            `json:"encode"`
+	Headers     map[string]string `json:"headers"`
+	Cookies     map[string]string `json:"cookies"`
 
-	Retry       int           // 失败重试次数，0不重试
-	RetryPolicy RetryPolicy   // 失败监控，返回值为true表示失败
-	Timeout     time.Duration // 超时时间，默认3秒
+	Retry       int         `json:"retry"`   // 失败重试次数，0不重试
+	RetryPolicy RetryPolicy `json:"-"`       // 失败监控，返回值为true表示失败
+	Timeout     int         `json:"timeout"` // 超时时间，单位ms，默认3000ms
 }
 
 // RetryPolicy retry 策略
@@ -50,19 +50,17 @@ var defaultRetryPolicy RetryPolicy = func(resp *http.Response, err error) bool {
 }
 
 func (o *Options) GetRetryPolicy() RetryPolicy {
-	r := defaultRetryPolicy
-	if o.RetryPolicy != nil {
-		r = o.RetryPolicy
+	if o.RetryPolicy == nil {
+		o.RetryPolicy = defaultRetryPolicy
 	}
-	return r
+	return o.RetryPolicy
 }
 
 func (o *Options) GetTimeout() time.Duration {
-	t := 3 * time.Second
-	if o.Timeout > 0 {
-		t = o.Timeout
+	if o.Timeout <= 0 {
+		o.Timeout = 3000
 	}
-	return t
+	return time.Duration(o.Timeout) * time.Millisecond
 }
 
 // Result http request result
@@ -89,7 +87,7 @@ func POST(opt *Options) (*Result, error) {
 		}
 		opt.makeRequest(request)
 		client := http.Client{
-			Timeout: opt.Timeout,
+			Timeout: opt.GetTimeout(),
 		}
 		response, err = client.Do(request)
 		if err != nil {
@@ -130,7 +128,7 @@ func GET(opt *Options) (*Result, error) {
 	retry := opt.Retry
 	for {
 		client := http.Client{
-			Timeout: opt.Timeout,
+			Timeout: opt.GetTimeout(),
 		}
 		response, err = client.Do(request)
 		if err != nil {

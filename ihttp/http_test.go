@@ -2,45 +2,163 @@ package ihttp
 
 import (
 	"testing"
+
+	"github.com/weirwei/ikit/iutil"
 )
 
-func TestHttpPost(t *testing.T) {
-	requestMap := map[string]interface{}{
-		"category": "treading",
-		"period":   "day",
-		"lang":     "go",
-		"offset":   0,
-		"limit":    2,
+func TestGET(t *testing.T) {
+	type args struct {
+		opt *Options
 	}
-
-	options := Options{
-		URL:         "https://e.juejrewin.cn/resoewurces/github",
-		RequestBody: requestMap,
-		Encode:      EncodeForm,
-		Retry:       6,
+	tests := []struct {
+		name    string
+		args    args
+		want    *Result
+		wantErr bool
+	}{
+		{
+			name: "success",
+			args: args{
+				opt: &Options{
+					URL: "https://suggest.taobao.com/sug",
+					RequestBody: map[string]interface{}{
+						"code": "utf-8",
+						"q":    "ps5",
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "retry",
+			args: args{
+				opt: &Options{
+					URL: "https://suggest.taoxxxxbao.com/suxxxxxg",
+					RequestBody: map[string]interface{}{
+						"code": "utf-8",
+						"q":    "ps5",
+					},
+					Retry: 2,
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "timeout",
+			args: args{
+				opt: &Options{
+					URL: "https://suggest.taobao.com/sug",
+					RequestBody: map[string]interface{}{
+						"code": "utf-8",
+						"q":    "ps5",
+					},
+					Timeout: 3,
+				},
+			},
+			wantErr: true,
+		},
 	}
-	result, err := POST(&options)
-	if err != nil {
-		t.Error(err)
-		return
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := GET(tt.args.opt)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GET() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			t.Log(iutil.ToJson(got))
+		})
 	}
-	t.Log(result.ResponseBody)
 }
 
-func TestHttpGet(t *testing.T) {
-	requestMap := map[string]interface{}{
-		"code": "utf-8",
-		"q":    "ps5",
+func TestPOST(t *testing.T) {
+	type args struct {
+		opt *Options
 	}
-	options := Options{
-		URL:         "https://sugg12est.tao321bao.com/sug",
-		RequestBody: requestMap,
-		Retry:       2,
+	tests := []struct {
+		name    string
+		args    args
+		want    *Result
+		wantErr bool
+	}{
+		{
+			name: "form success",
+			args: args{
+				opt: &Options{
+					URL: "https://e.juejin.cn/resources/github",
+					RequestBody: map[string]interface{}{
+						"category": "treading",
+						"period":   "day",
+						"lang":     "go",
+						"offset":   0,
+						"limit":    2,
+					},
+					Encode: EncodeForm,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "json success",
+			args: args{
+				opt: &Options{
+					URL: "https://e.juejin.cn/resources/github",
+					RequestBody: map[string]interface{}{
+						"category": "treading",
+						"period":   "day",
+						"lang":     "go",
+						"offset":   0,
+						"limit":    2,
+					},
+					Encode: EncodeJson,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "retry",
+			args: args{
+				opt: &Options{
+					URL: "https://e.juejssssin.cn/resources/github",
+					RequestBody: map[string]interface{}{
+						"category": "treading",
+						"period":   "day",
+						"lang":     "go",
+						"offset":   0,
+						"limit":    2,
+					},
+					Encode: EncodeJson,
+					Retry:  3,
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "timeout",
+			args: args{
+				opt: &Options{
+					URL: "https://e.juejin.cn/resources/github",
+					RequestBody: map[string]interface{}{
+						"category": "treading",
+						"period":   "day",
+						"lang":     "go",
+						"offset":   0,
+						"limit":    2,
+					},
+					Encode:  EncodeJson,
+					Timeout: 3,
+				},
+			},
+			wantErr: true,
+		},
 	}
-	result, err := GET(&options)
-	if err != nil {
-		t.Error(err)
-		return
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := POST(tt.args.opt)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("POST() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			t.Log(iutil.ToJson(got))
+		})
 	}
-	t.Log(result.ResponseBody)
 }
