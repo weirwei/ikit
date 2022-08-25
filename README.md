@@ -1,18 +1,37 @@
 # ikit
 基础功能库
 
-[toc]
+* [安装](#安装)
+* [功能](#功能)
+* [使用文档](#使用文档) 
+    * [ihttp](#ihttp)
+        * [POST(opt *Options) (*Result, error)](#postopt-options-result-error)
+        * [GET(opt *Options) (*Result, error)](#getopt-options-result-error)
+    * [ilog](#ilog)
+    * [iutil](#iutil)
+        * [HanLess(s1, s2 string) bool](#hanlesss1-s2-string-bool)
+        * [MinInt(a, b int) int](#mininta-b-int-int)
+        * [MaxInt(a, b int) int](#maxinta-b-int-int)
+        * [LoadYaml(filename, subPath string, s interface{})](#loadyamlfilename-subpath-string-s-interface)
+        * [SetRootPath(r string)](#setrootpathr-string)
+        * [GetRootPath() string](#getrootpath-string)
+        * [ToJson(input interface{}) string](#tojsoninput-interface-string)
+        * [Trim(str string) string](#trimstr-string-string)
+        * [StringBytes(s string) []byte](#stringbytess-string-byte)
+        * [BytesString(b []byte) string](#bytesstringb-byte-string)
+        * [StructMap(st interface{}, m map[string]interface{}) error](#structmapst-interface-m-mapstringinterface-error)
+
+## 安装
+```shell
+go get -u github.com/weirwei/ikit
+```
 
 ## 功能
 - ihttp 请求
 - ilog 日志
 - iutil 工具包
 
-## 使用
-### 安装
-```shell
-go get -u github.com/weirwei/ikit
-```
+## 使用文档
 
 ### ihttp
 发送http 请求
