@@ -40,11 +40,10 @@ go get -u github.com/weirwei/ikit
 
 #### POST(opt *Options) (*Result, error)
 发送post 请求
----
+
 #### GET(opt *Options) (*Result, error)
 发送get 请求
----
----
+
 ### ilog
 简单封装了`log`
 使用时仅直接调用方法即可
