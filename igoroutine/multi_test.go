@@ -5,8 +5,6 @@ import (
 	"strconv"
 	"testing"
 	"time"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestNewMulti(t *testing.T) {
@@ -25,5 +23,7 @@ func TestNewMulti(t *testing.T) {
 		//}
 	}
 	err := multi.Wait()
-	assert.Equal(t, 1000, len(err))
+	if len(err) != 1000 {
+		t.Fail()
+	}
 }
