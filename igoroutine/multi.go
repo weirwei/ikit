@@ -10,7 +10,7 @@ type Multi struct {
 	wg      *WaitGroup
 	limiter chan struct{}
 	lock    sync.Mutex
-	errMsg  []error
+	errs    []error
 }
 
 // exec func with safe mode, prevent crash the server.
@@ -51,7 +51,7 @@ func (m *Multi) Run(f func() error) {
 // returns err msg.
 func (m *Multi) Wait() []error {
 	m.wg.Wait()
-	return m.errMsg
+	return m.errs
 }
 
 // appendErr record err during missions with lock
@@ -60,6 +60,6 @@ func (m *Multi) appendErr(err error) {
 		return
 	}
 	m.lock.Lock()
-	m.errMsg = append(m.errMsg, err)
+	m.errs = append(m.errs, err)
 	m.lock.Unlock()
 }
