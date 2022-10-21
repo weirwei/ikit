@@ -33,6 +33,39 @@ go get -u github.com/weirwei/ikit
 
 ## 使用文档
 
+### igoroutine
+对go 的协程进行一些封装，提供便利的工具
+
+- Multi: 协程控制器，可以控制单次任务的最大协程数
+- Divide: 分批处理器，可以并发分批处理数据
+
+#### NewMulti(num int) *Multi
+创建一个Multi，控制协程数为num
+
+#### (m *Multi) Run(f func() error)
+Multi 并发执行f()
+
+#### (m *Multi) Wait() []error
+阻塞，等待协程执行完毕，返回错误信息
+
+#### NewDivide(multi *Multi, opts ...DivideOption) *Divide
+创建一个Divide，用于并发分批处理数据
+
+#### OptTotal(total int) DivideOption
+设置数据总量
+
+#### OptPageSize(pageSize int) DivideOption
+设置分页大小
+
+#### OptPage(page int) DivideOption
+设置分页
+
+#### (d *Divide) GetTotal() int
+获取数据总量
+
+#### (d *Divide) Run(f func(page, pageSize int) (total int, err error)) []error
+进行分组运行，入参为执行的函数，返回参数为错误信息
+
 ### ihttp
 发送http 请求
 目前仅支持post 和get 请求

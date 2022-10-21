@@ -38,7 +38,7 @@ func NewMulti(num int) *Multi {
 	}
 }
 
-// Run run func() with limited goroutine num.
+// Run func() with limited goroutine num.
 func (m *Multi) Run(f func() error) {
 	m.limiter <- struct{}{}
 	m.wg.Wrap(func() {
@@ -54,7 +54,7 @@ func (m *Multi) Wait() []error {
 	return m.errs
 }
 
-// appendErr record err during missions with lock
+// appendErr record err during missions with lock.
 func (m *Multi) appendErr(err error) {
 	if err == nil {
 		return
