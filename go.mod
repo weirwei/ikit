@@ -1,6 +1,6 @@
 module github.com/weirwei/ikit
 
-go 1.17
+go 1.22
 
 require (
 	github.com/json-iterator/go v1.1.12

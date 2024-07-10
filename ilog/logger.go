@@ -2,7 +2,7 @@ package ilog
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"os"
 	"sync"
@@ -19,7 +19,7 @@ var (
 	mu       sync.Mutex
 )
 
-// SetLevel 设置日志等级，默认打印全部
+// SetLevel 设置日志等级，打印指定等级以上的日志。默认打印全部
 func SetLevel(level Level) {
 	mu.Lock()
 	defer mu.Unlock()
@@ -29,21 +29,21 @@ func SetLevel(level Level) {
 	}
 
 	if LevelDebug > level {
-		debugLog.SetOutput(ioutil.Discard)
+		debugLog.SetOutput(io.Discard)
 	}
 	if LevelInfo > level {
-		infoLog.SetOutput(ioutil.Discard)
+		infoLog.SetOutput(io.Discard)
 	}
 	if LevelWarn > level {
-		warnLog.SetOutput(ioutil.Discard)
+		warnLog.SetOutput(io.Discard)
 	}
 	if LevelError > level {
-		errorLog.SetOutput(ioutil.Discard)
+		errorLog.SetOutput(io.Discard)
 	}
 	if LevelFatal > level {
-		fatalLog.SetOutput(ioutil.Discard)
+		fatalLog.SetOutput(io.Discard)
 	}
 	if LevelPanic > level {
-		panicLog.SetOutput(ioutil.Discard)
+		panicLog.SetOutput(io.Discard)
 	}
 }
