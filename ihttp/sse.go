@@ -20,7 +20,7 @@ const (
 	SSESendResultTimeout = 1
 )
 
-type sendEvents struct {
+type SendEvents struct {
 	ctx *gin.Context
 
 	writer chan any      // 数据通道，使用管道保证线程安全
@@ -36,8 +36,8 @@ type sseConfig struct {
 
 type SSEOption func(c *sseConfig)
 
-func NewSendEvents(ctx *gin.Context, opts ...SSEOption) *sendEvents {
-	s := &sendEvents{
+func NewSendEvents(ctx *gin.Context, opts ...SSEOption) *SendEvents {
+	s := &SendEvents{
 		ctx:    ctx,
 		writer: make(chan any),
 		over:   make(chan struct{}),
@@ -71,7 +71,7 @@ func SetTimeout(timeout time.Duration) SSEOption {
 	}
 }
 
-func (s *sendEvents) Send(data any) {
+func (s *SendEvents) Send(data any) {
 	timer := time.NewTimer(s.config.timeout)
 	select {
 	case s.writer <- data:
@@ -81,13 +81,13 @@ func (s *sendEvents) Send(data any) {
 	timer.Stop()
 }
 
-func (s *sendEvents) End() int {
+func (s *SendEvents) End() int {
 	close(s.writer)
 	<-s.over // 阻塞流程
 	return s.result
 }
 
-func (s *sendEvents) pushData(data any) {
+func (s *SendEvents) pushData(data any) {
 	var event sse.Event
 	switch v := data.(type) {
 	case sse.Event:
@@ -113,6 +113,6 @@ func (s *sendEvents) pushData(data any) {
 	atomic.AddUint64(&s.config.eventId, 1) // 发完消息后，id+1
 }
 
-func (s *sendEvents) Close() {
+func (s *SendEvents) Close() {
 	s.ctx.Render(http.StatusOK, sse.Event{Event: SSENameClose})
 }
