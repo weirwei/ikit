@@ -1,7 +1,6 @@
 package ihttp
 
 import (
-	"fmt"
 	"github.com/gin-contrib/sse"
 	"github.com/gin-gonic/gin"
 	"github.com/weirwei/ikit/igoroutine"
@@ -16,6 +15,9 @@ const (
 	SSENameError    = "error"
 	SSENameClose    = "close"
 	SSENameResponse = "response"
+
+	SSESendResultSuccess = 0
+	SSESendResultTimeout = 1
 )
 
 type sendEvents struct {
@@ -24,6 +26,7 @@ type sendEvents struct {
 	writer chan any      // 数据通道，使用管道保证线程安全
 	over   chan struct{} // 用于阻塞流程，stream 发完之后才能 return
 	config *sseConfig
+	result int // 执行结果
 }
 
 type sseConfig struct {
@@ -42,6 +45,7 @@ func NewSendEvents(ctx *gin.Context, opts ...SSEOption) *sendEvents {
 			eventId: 0,
 			timeout: 2 * time.Second,
 		},
+		result: SSESendResultSuccess,
 	}
 	for _, opt := range opts {
 		opt(s.config)
@@ -67,20 +71,20 @@ func SetTimeout(timeout time.Duration) SSEOption {
 	}
 }
 
-func (s *sendEvents) Send(data any) error {
+func (s *sendEvents) Send(data any) {
 	timer := time.NewTimer(s.config.timeout)
 	select {
 	case s.writer <- data:
 	case <-timer.C: // 推送超时
-		return fmt.Errorf("send events timeout")
+		s.result = SSESendResultTimeout
 	}
 	timer.Stop()
-	return nil
 }
 
-func (s *sendEvents) End() {
+func (s *sendEvents) End() int {
 	close(s.writer)
 	<-s.over // 阻塞流程
+	return s.result
 }
 
 func (s *sendEvents) pushData(data any) {
