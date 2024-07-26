@@ -50,6 +50,7 @@ func NewSendEvents(ctx *gin.Context, opts ...SSEOption) *SendEvents {
 	for _, opt := range opts {
 		opt(s.config)
 	}
+
 	go igoroutine.Safe(func() {
 		defer close(s.over) // 数据推完，通知结束，解除阻塞
 		for {
