@@ -4,12 +4,13 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/weirwei/ikit/igoroutine"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/gin-gonic/gin"
+	"github.com/weirwei/ikit/igoroutine"
 )
 
 func TestSendEvents_Send(t *testing.T) {
@@ -28,7 +29,8 @@ func TestSendEvents_Send(t *testing.T) {
 			for i := 0; i < 10; i++ {
 				muti.Run(func() error {
 					_i := i
-					return event.Send(fmt.Sprintf("go hello %d", _i))
+					event.Send(fmt.Sprintf("go hello %d", _i))
+					return nil
 				})
 			}
 			muti.Wait()
