@@ -1,13 +1,14 @@
 package ihttp
 
 import (
-	"github.com/gin-contrib/sse"
-	"github.com/gin-gonic/gin"
-	"github.com/weirwei/ikit/igoroutine"
 	"net/http"
 	"strconv"
 	"sync/atomic"
 	"time"
+
+	"github.com/gin-contrib/sse"
+	"github.com/gin-gonic/gin"
+	"github.com/weirwei/ikit/igoroutine"
 )
 
 const (

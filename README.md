@@ -1,36 +1,51 @@
 # ikit
 基础功能库
 
-* [ikit](#ikit)
-    * [安装](#安装)
-    * [功能](#功能)
-    * [使用文档](#使用文档)
-        * [igoroutine](#igoroutine)
-            * [NewMulti(num int) *Multi](#newmultinum-int-multi)
-            * [(m *Multi) Run(f func() error)](#m-multi-runf-func-error)
-            * [(m *Multi) Wait() []error](#m-multi-wait-error)
-            * [NewDivide(multi *Multi, opts ...DivideOption) *Divide](#newdividemulti-multi-opts-divideoption-divide)
-            * [OptTotal(total int) DivideOption](#opttotaltotal-int-divideoption)
-            * [OptPageSize(pageSize int) DivideOption](#optpagesizepagesize-int-divideoption)
-            * [OptPage(page int) DivideOption](#optpagepage-int-divideoption)
-            * [(d *Divide) GetTotal() int](#d-divide-gettotal-int)
-            * [(d *Divide) Run(f func(page, pageSize int) (total int, err error)) []error](#d-divide-runf-funcpage-pagesize-int-total-int-err-error-error)
-        * [ihttp](#ihttp)
-            * [POST(opt *Options) (*Result, error)](#postopt-options-result-error)
-            * [GET(opt *Options) (*Result, error)](#getopt-options-result-error)
-        * [ilog](#ilog)
-        * [iutil](#iutil)
-            * [HanLess(s1, s2 string) bool](#hanlesss1-s2-string-bool)
-            * [MinInt(a, b int) int](#mininta-b-int-int)
-            * [MaxInt(a, b int) int](#maxinta-b-int-int)
-            * [LoadYaml(filename, subPath string, s interface{})](#loadyamlfilename-subpath-string-s-interface)
-            * [SetRootPath(r string)](#setrootpathr-string)
-            * [GetRootPath() string](#getrootpath-string)
-            * [ToJson(input interface{}) string](#tojsoninput-interface-string)
-            * [Trim(str string) string](#trimstr-string-string)
-            * [StringBytes(s string) []byte](#stringbytess-string-byte)
-            * [BytesString(b []byte) string](#bytesstringb-byte-string)
-            * [StructMap(st interface{}, m map[string]interface{}) error](#structmapst-interface-m-mapstringinterface-error)
+- [ikit](#ikit)
+  - [安装](#安装)
+  - [功能](#功能)
+  - [使用文档](#使用文档)
+    - [igoroutine](#igoroutine)
+      - [NewMulti(num int) \*Multi](#newmultinum-int-multi)
+      - [(m \*Multi) Run(f func() error)](#m-multi-runf-func-error)
+      - [(m \*Multi) Wait() \[\]error](#m-multi-wait-error)
+      - [NewDivide(multi \*Multi, opts ...DivideOption) \*Divide](#newdividemulti-multi-opts-divideoption-divide)
+      - [OptTotal(total int) DivideOption](#opttotaltotal-int-divideoption)
+      - [OptPageSize(pageSize int) DivideOption](#optpagesizepagesize-int-divideoption)
+      - [OptPage(page int) DivideOption](#optpagepage-int-divideoption)
+      - [(d \*Divide) GetTotal() int](#d-divide-gettotal-int)
+      - [(d \*Divide) Run(f func(page, pageSize int) (total int, err error)) \[\]error](#d-divide-runf-funcpage-pagesize-int-total-int-err-error-error)
+    - [ihttp](#ihttp)
+      - [POST(opt \*Options) (\*Result, error)](#postopt-options-result-error)
+      - [GET(opt \*Options) (\*Result, error)](#getopt-options-result-error)
+    - [ilog](#ilog)
+    - [zlog](#zlog)
+      - [InitLog(config Config)](#initlogconfig-config)
+      - [CloseLogger()](#closelogger)
+      - [Info(ctx \*gin.Context, args ...interface{})](#infoctx-gincontext-args-interface)
+      - [Infof(ctx \*gin.Context, format string, args ...interface{})](#infofctx-gincontext-format-string-args-interface)
+      - [Debug(ctx \*gin.Context, args ...interface{})](#debugctx-gincontext-args-interface)
+      - [Debugf(ctx \*gin.Context, format string, args ...interface{})](#debugfctx-gincontext-format-string-args-interface)
+      - [Error(ctx \*gin.Context, args ...interface{})](#errorctx-gincontext-args-interface)
+      - [Errorf(ctx \*gin.Context, format string, args ...interface{})](#errorfctx-gincontext-format-string-args-interface)
+      - [Warn(ctx \*gin.Context, args ...interface{})](#warnctx-gincontext-args-interface)
+      - [Warnf(ctx \*gin.Context, format string, args ...interface{})](#warnfctx-gincontext-format-string-args-interface)
+      - [Fatal(ctx \*gin.Context, args ...interface{})](#fatalctx-gincontext-args-interface)
+      - [Fatalf(ctx \*gin.Context, format string, args ...interface{})](#fatalfctx-gincontext-format-string-args-interface)
+      - [Panic(ctx \*gin.Context, args ...interface{})](#panicctx-gincontext-args-interface)
+      - [Panicf(ctx \*gin.Context, format string, args ...interface{})](#panicfctx-gincontext-format-string-args-interface)
+    - [iutil](#iutil)
+      - [HanLess(s1, s2 string) bool](#hanlesss1-s2-string-bool)
+      - [MinInt(a, b int) int](#mininta-b-int-int)
+      - [MaxInt(a, b int) int](#maxinta-b-int-int)
+      - [LoadYaml(filename, subPath string, s interface{})](#loadyamlfilename-subpath-string-s-interface)
+      - [SetRootPath(r string)](#setrootpathr-string)
+      - [GetRootPath() string](#getrootpath-string)
+      - [ToJson(input interface{}) string](#tojsoninput-interface-string)
+      - [Trim(str string) string](#trimstr-string-string)
+      - [StringBytes(s string) \[\]byte](#stringbytess-string-byte)
+      - [BytesString(b \[\]byte) string](#bytesstringb-byte-string)
+      - [StructMap(st interface{}, m map\[string\]interface{}) error](#structmapst-interface-m-mapstringinterface-error)
 
 ## 安装
 ```shell
@@ -120,6 +135,55 @@ ilog.Infof("get a info %s", m)
 ```
 
 ---
+---
+
+### zlog
+基于zap封装的日志库，提供了更便捷的日志记录方式和上下文日志功能
+
+服务间请求的时候，把 `zlog.HeaderKeyLogId` 放入请求头中，即可根据 `logId` 串联日志
+
+#### InitLog(config Config)
+> 初始化日志配置
+
+#### CloseLogger()
+> 关闭日志，刷新缓冲区
+
+#### Info(ctx *gin.Context, args ...interface{})
+> 记录info级别日志
+
+#### Infof(ctx *gin.Context, format string, args ...interface{})
+> 格式化记录info级别日志
+
+#### Debug(ctx *gin.Context, args ...interface{})
+> 记录debug级别日志
+
+#### Debugf(ctx *gin.Context, format string, args ...interface{})
+> 格式化记录debug级别日志
+
+#### Error(ctx *gin.Context, args ...interface{})
+> 记录error级别日志
+
+#### Errorf(ctx *gin.Context, format string, args ...interface{})
+> 格式化记录error级别日志
+
+#### Warn(ctx *gin.Context, args ...interface{})
+> 记录warn级别日志
+
+#### Warnf(ctx *gin.Context, format string, args ...interface{})
+> 格式化记录warn级别日志
+
+#### Fatal(ctx *gin.Context, args ...interface{})
+> 记录fatal级别日志
+
+#### Fatalf(ctx *gin.Context, format string, args ...interface{})
+> 格式化记录fatal级别日志
+
+#### Panic(ctx *gin.Context, args ...interface{})
+> 记录panic级别日志
+
+#### Panicf(ctx *gin.Context, format string, args ...interface{})
+> 格式化记录panic级别日志
+
 ---
 
 ### iutil
