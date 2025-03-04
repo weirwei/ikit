@@ -17,6 +17,50 @@ const (
 	HeaderKeyLogId = "X-Log-Id"
 )
 
+type (
+	Field  = zap.Field
+	Logger = zap.Logger
+)
+
+var (
+	Array    = zap.Array
+	Bools    = zap.Bools
+	Ints     = zap.Ints
+	Uints    = zap.Uints
+	Float64s = zap.Float64s
+	Strings  = zap.Strings
+	Errors   = zap.Errors
+
+	Binary = zap.Binary
+	Bool   = zap.Bool
+
+	ByteString = zap.ByteString
+	String     = zap.String
+
+	Float64 = zap.Float64
+	Float32 = zap.Float32
+
+	Int   = zap.Int
+	Int64 = zap.Int64
+	Int32 = zap.Int32
+	Int16 = zap.Int16
+	Int8  = zap.Int8
+
+	Uint   = zap.Uint
+	Uint64 = zap.Uint64
+	Uint32 = zap.Uint32
+	Uint16 = zap.Uint16
+	Uint8  = zap.Uint8
+
+	Reflect       = zap.Reflect
+	Namespace     = zap.Namespace
+	Duration      = zap.Duration
+	Object        = zap.Object
+	Any           = zap.Any
+	Skip          = zap.Skip()
+	AddCallerSkip = zap.AddCallerSkip
+)
+
 func Info(ctx *gin.Context, args ...interface{}) {
 	if ctx != nil {
 		newSugaredLogger(ctx).Info(args...)
